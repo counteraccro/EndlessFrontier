@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class GuildInvasionController extends AbstractController
 {
     /**
-     * @Route("/guild/invasion", name="guild_invasion")
+     * @Route("/guild/invasion", name="guild_invasion_index")
      */
     public function index()
     {
