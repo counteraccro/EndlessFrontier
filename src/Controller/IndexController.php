@@ -14,7 +14,7 @@ class IndexController extends AbstractController
     public function index(GuildInvasion $guildInvasion)
     {
         return $this->render('index/index.html.twig', [
-            'controller_name' => $guildInvasion->generateGrid(),
+            'controller_name' => "Index",
         ]);
         
     }
