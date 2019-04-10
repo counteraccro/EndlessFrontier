@@ -32,9 +32,11 @@ class GuildInvasion {
         
         $xml = simplexml_load_file($absoluteFilePath);
         
+        $this->debug($xml->raidList->raid[0]);
+        
         foreach($xml as $element)
         {
-            $this->debug($element);
+           //$this->debug($key);
            
         }
         
