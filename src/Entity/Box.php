@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -7,11 +6,14 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ *
  * @ORM\Entity(repositoryClass="App\Repository\BoxRepository")
  */
 class Box
 {
+
     /**
+     *
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -19,166 +21,199 @@ class Box
     private $id;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $blockId;
 
     /**
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $bossKindNum;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $level;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $star;
 
     /**
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $plusTribe;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $plusValue;
 
     /**
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $minusTribe;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $minusValue;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $meleeDef;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $rangeDef;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $gem;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $honorCoin;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $petKindNum;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $numPet;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $petKindNum2;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $numPet2;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $guildCoin;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $raidCoin;
 
     /**
+     *
      * @ORM\Column(type="float")
      */
     private $incAttack;
 
     /**
+     *
      * @ORM\Column(type="float")
      */
     private $decSpeed;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $resistType;
 
     /**
+     *
      * @ORM\Column(type="float")
      */
     private $resAttRatioMin;
 
     /**
+     *
      * @ORM\Column(type="float")
      */
     private $resAttRatioMax;
 
     /**
+     *
      * @ORM\Column(type="float")
      */
     private $resDefRatioMin;
 
     /**
+     *
      * @ORM\Column(type="float")
      */
     private $resDefRatioMax;
 
     /**
+     *
      * @ORM\Column(type="float")
      */
     private $attResMin;
 
     /**
+     *
      * @ORM\Column(type="float")
      */
     private $attResMax;
 
     /**
+     *
      * @ORM\Column(type="float")
      */
     private $defResMin;
 
     /**
+     *
      * @ORM\Column(type="float")
      */
     private $defResMax;
 
     /**
+     *
      * @ORM\Column(type="integer")
      */
     private $recommendResist;
 
     /**
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $showRecommendResist;
 
     /**
+     *
      * @ORM\ManyToOne(targetEntity="App\Entity\Raid", inversedBy="box")
      * @ORM\JoinColumn(nullable=false)
      */

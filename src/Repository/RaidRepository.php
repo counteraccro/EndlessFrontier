@@ -22,6 +22,7 @@ class RaidRepository extends ServiceEntityRepository
 
     /**
      * Dernier raid enregistré
+     *
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
     public function findLastRaid()
@@ -31,12 +32,10 @@ class RaidRepository extends ServiceEntityRepository
         $qb->orderBy('r.id', 'DESC');
 
         $result = $qb->getQuery()->getResult();
-        
-        if(empty($result))
-        {
+
+        if (empty($result)) {
             return null;
-        }
-        else {
+        } else {
             return $result[0];
         }
     }
