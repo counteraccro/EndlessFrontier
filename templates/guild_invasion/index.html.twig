@@ -3,18 +3,14 @@
 {% block title %}Hello GuildInvasionController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/count/Projets/endless_frontier/src/Controller/GuildInvasionController.php'|file_link(0) }}">src/Controller/GuildInvasionController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/count/Projets/endless_frontier/templates/guild_invasion/index.html.twig'|file_link(0) }}">templates/guild_invasion/index.html.twig</a></code></li>
-    </ul>
-</div>
+	<div class="row">
+		{% for box in raid.box  %}
+			<div class="col">
+				{{ box.blockId }}
+			</div>		
+			{% if loop.index is divisible by(13) %}
+    			 <div class="w-100"></div>
+            {% endif %}
+		{% endfor %}
+	</div>
 {% endblock %}
