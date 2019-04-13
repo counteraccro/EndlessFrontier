@@ -1,4 +1,7 @@
 
+/*
+* template show.html.twig
+*/
 #guild_invasion_grid .row .col {
 	margin-left: 1px;
 	margin-top: 1px;
@@ -23,3 +26,7 @@
 #guild_invasion_grid .row .col .box.hover {
 	border : 1px solid orange
 }
+
+/*
+* fin template show.html.twig
+*/
