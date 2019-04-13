@@ -35,7 +35,7 @@
                   <th>#{{ raid.id }}</th>
                   <td><a href="{{path('guild_invasion_show', {id : raid.id})}}"><span class="oi oi-eye"></span> Grille n°{{ raid.numero }}</a></td>
                   <td>Otto</td>
-                  <td>@mdo</td>
+                  <td><a href="{{path('guild_invasion_delete_raid', {id : raid.id})}}"><span class="oi oi-x"></span> Supprimer</a></td>
                 </tr>
            {% endfor %}
   </tbody>

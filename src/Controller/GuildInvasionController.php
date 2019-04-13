@@ -37,11 +37,28 @@ class GuildInvasionController extends AbstractController
      *
      * @param Raid $raid
      */
-    public function showgrid(Raid $raid)
+    public function showGrid(Raid $raid)
     {
         return $this->render('guild_invasion/show.html.twig', [
             'raid' => $raid
         ]);
+    }
+
+    /**
+     * Supprime un raid
+     *
+     * @Route("/guild/invasion/delete/raid/{id}", name="guild_invasion_delete_raid")
+     * @ParamConverter("raid", options={"mapping": {"id": "id"}})
+     *
+     * @param Raid $raid
+     */
+    public function deleteRaid(Raid $raid)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($raid);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('guild_invasion_index');
     }
 
     /**
