@@ -19,6 +19,16 @@ class RaidRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Raid::class);
     }
+    
+    /**
+     * Surcharge find all
+     * {@inheritDoc}
+     * @see \Doctrine\ORM\EntityRepository::findAll()
+     */
+    public function findAll()
+    {
+        return $this->findBy(array(), array('id' => 'DESC'));
+    }
 
     /**
      * Dernier raid enregistré

@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GuildInvasionController!{% endblock %}
+
+{% block body %}
+<div id="guild_invasion_grid">
+	<h1>Grille pour la guerre des guild n°{{ raid.numero }} [#{{ raid.id }}]</h1>
+	
+	<a href="{{path('guild_invasion_index')}}"><span class="oi oi-arrow-thick-left"></span> Retour</a> 
+	<a href="#" class="float-right"><span class="oi oi-data-transfer-download"></span> Lancer la simulation</a>
+	
+	<div class="row no-gutters">
+		{% for box in raid.box  %}
+			<div class="col">
+				{% set content %}
+                    <div>
+                    	<b>Nom:</b> {{ box.name }} <br />
+                    	<b>Niveau:</b> {{ box.level }} <br />
+                    	<b>Etoile:</b> {{ box.star }}
+                    </div>
+				{% endset %}
+				<div class="box closed" data-container="body" data-toggle="popover" data-placement="top" title="Case {{ box.blockId }}" data-content="{{ content }}" data-html="true">
+		            <div class="b b_id">No {{ box.blockId }}</div>
+		            <div class="b b_star">
+    		            {% if box.star > 0  %}
+    		                {{ box.star }}
+    		                <span class="oi oi-star"></span>
+    		            {% endif %}
+		            </div>
+		            <div class="b b_level">Lv {{ box.level }}</div>
+		        </div>
+			</div>		
+			{% if loop.index is divisible by(13) %}
+    			 <div class="w-100"></div>
+            {% endif %}
+		{% endfor %}
+	</div>
+</div>
+
+<script>
+
+$(function () {
+
+	$('#guild_invasion_grid .col div').hover (
+		function() {
+			$(this).popover('show');
+			$(this).addClass('hover');
+		}, function() {
+			 $(this).popover('hide');
+			 $(this).removeClass('hover');
+		}
+	);
+});
+
+</script>
+
+{% endblock %}
+

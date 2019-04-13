@@ -1,16 +1,46 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello GuildInvasionController!{% endblock %}
+{% block title %}Liste des invasions de guildes{% endblock %}
 
 {% block body %}
-	<div class="row">
-		{% for box in raid.box  %}
-			<div class="col">
-				{{ box.blockId }}
-			</div>		
-			{% if loop.index is divisible by(13) %}
-    			 <div class="w-100"></div>
-            {% endif %}
-		{% endfor %}
-	</div>
+<div id="guild_invasion_list">
+	<h1>Listing des invasions de guildes</h1>
+	
+	<form action="{{path('guild_invasion_new_raid')}}" method="POST">
+		<div class="input-group">
+  			<select name="numero" class="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon">
+                <option selected>Selectionner la grille de l'invasion</option>
+                {% for value, label in listing_raid %}
+                	<option value="{{ value }}">{{ label }}</option>
+               	{% endfor %}
+         	</select>
+      		<div class="input-group-append">
+        		<input class="btn btn-outline-primary" type="submit" value="Créer la grille" />
+     		</div>
+		</div>
+	</form>
+	
+	<table class="table table-striped">
+  		<thead>
+    		<tr>
+      			<th scope="col">#</th>
+      			<th scope="col">Numéro</th>
+      			<th scope="col">Date</th>
+      			<th scope="col">Action</th>
+    		</tr>
+  		</thead>
+  		<tbody>
+            {% for raid in raids  %}
+                <tr>
+                  <th>#{{ raid.id }}</th>
+                  <td><a href="{{path('guild_invasion_show', {id : raid.id})}}"><span class="oi oi-eye"></span> Grille n°{{ raid.numero }}</a></td>
+                  <td>Otto</td>
+                  <td>@mdo</td>
+                </tr>
+           {% endfor %}
+  </tbody>
+</table>
+</div>
+
 {% endblock %}
+

@@ -1,0 +1,25 @@
+
+#guild_invasion_grid .row .col {
+	margin-left: 1px;
+	margin-top: 1px;
+}
+
+#guild_invasion_grid .row .col .box {
+	width: 100%;
+	height: 100%;
+	padding: 5px;
+}
+
+#guild_invasion_grid .row .col .box .b {
+	height: 33%;
+}
+
+#guild_invasion_grid .row .col .box.closed {
+	border : 1px solid gray;
+	background-color: #696969;
+	color: #DCDCDC;
+}
+
+#guild_invasion_grid .row .col .box.hover {
+	border : 1px solid orange
+}
