@@ -21,6 +21,9 @@
                     {{ message }}
             	</div>
             {% endfor %}
+            
+            <a href="{{path('logout')}}"><span class="oi oi-arrow-thick-left"></span> Deconnexion</a>
+            
             {% block body %}{% endblock %}
         </div>
         {% block javascripts %}{% endblock %}
