@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des membres de la guilde{% endblock %}
+
+{% block body %}
+	<h1>Gestion des membres de la guilde</h1>
+	
+	<a href="{{path('member_add')}}">Ajouter un membre</a>
+	
+		<table class="table table-striped">
+  		<thead>
+    		<tr>
+      			<th scope="col">#</th>
+      			<th scope="col">Name</th>
+      			<th scope="col">KL</th>
+      			<th scope="col">Bonus / Malus</th>
+      			<th scope="col">Max level boss</th>
+      			<th scope="col">Etat</th>
+      			<th scope="col">Action</th>
+    		</tr>
+  		</thead>
+  		<tbody>
+            {% for member in members  %}
+                <tr>
+                  <th>#{{ member.id }}</th>
+                  <td>{{ member.name }}</td>
+                  <td>{{ member.kl }}</td>
+                  <td>{{ member.bonusMalus }}</td>
+                  <td>{{ member.kl + member.bonusMalus }}</td>
+                  <td>
+                      {% if (member.disabled == 1) %}
+                      	<span class="text-danger"><b>Bannis</b></span>
+                      {% else %}
+                      	<span class="text-success"><b>Actif</b></span>
+                      {% endif %}
+                  </td>
+                  <td>
+					<a href="{{path('member_edit', {id : member.id})}}" title="editer"><span class="oi oi-pencil"></span></a>
+                   
+                    {% if (member.disabled == 1) %}
+                      	<a href="{{path('member_disabled', {id : member.id})}}" title="Définir en tant qu'actif"><span class="oi oi-circle-check"></span></a>
+                    {% else %}
+                      	<a href="{{path('member_disabled', {id : member.id})}}" title="Définir en tant que bannis"><span class="oi oi-circle-x"></span></a>
+                    {% endif %}
+                    
+                    <a href="{{path('member_delete', {id : member.id})}}" title="supprimer"><span class="oi oi-x"></span></a>
+                  </td>
+                </tr>
+           {% endfor %}
+  		</tbody>
+	</table>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modification de {{ member.name }}{% endblock %}
+
+{% block body %}
+	<h1>Modification de {{ member.name }}</h1>
+	<div>
+		<a href="{{path('member_index')}}"><span class="oi oi-arrow-thick-left"></span> Retour</a>
+	</div>
+	{{ form(form) }}
+{% endblock %}

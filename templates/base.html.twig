@@ -16,8 +16,23 @@
     </head>
     <body>
     	<div class="container">
+    		{% for message in app.flashes('success') %}
+            	<div class="alert alert-success alert-flash">
+                    {{ message }}
+            	</div>
+            {% endfor %}
             {% block body %}{% endblock %}
-        </div>>
+        </div>
         {% block javascripts %}{% endblock %}
+        
+        <script type="text/javascript">
+        jQuery().ready(function(){
+        	setTimeout(function () {
+        		$('.alert-flash').hide();
+            },
+            3500);
+        });
+           
+        </script>
     </body>
 </html>

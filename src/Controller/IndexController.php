@@ -10,7 +10,7 @@ class IndexController extends AbstractController
 
     /**
      *
-     * @Route("/index", name="index")
+     * @Route("/", name="index")
      */
     public function index(GuildInvasion $guildInvasion)
     {

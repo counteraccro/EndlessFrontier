@@ -219,6 +219,16 @@ class Box
      */
     private $raid;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\BoxMember", mappedBy="Box", orphanRemoval=true)
+     */
+    private $boxMembers;
+
+    public function __construct()
+    {
+        $this->boxMembers = new ArrayCollection();
+    }
+
     public function getRaid(): ?Raid
     {
         return $this->raid;
@@ -616,6 +626,37 @@ class Box
     public function setShowRecommendResist(string $showRecommendResist): self
     {
         $this->showRecommendResist = $showRecommendResist;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|BoxMember[]
+     */
+    public function getBoxMembers(): Collection
+    {
+        return $this->boxMembers;
+    }
+
+    public function addBoxMember(BoxMember $boxMember): self
+    {
+        if (!$this->boxMembers->contains($boxMember)) {
+            $this->boxMembers[] = $boxMember;
+            $boxMember->setBox($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBoxMember(BoxMember $boxMember): self
+    {
+        if ($this->boxMembers->contains($boxMember)) {
+            $this->boxMembers->removeElement($boxMember);
+            // set the owning side to null (unless already changed)
+            if ($boxMember->getBox() === $this) {
+                $boxMember->setBox(null);
+            }
+        }
 
         return $this;
     }
