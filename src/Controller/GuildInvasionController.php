@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use App\Service\GuildInvasion;
 use App\Entity\Raid;
 use Symfony\Component\HttpFoundation\Request;
+use App\Service\GuildInvasionSimulation;
 
 class GuildInvasionController extends AbstractController
 {
@@ -73,5 +74,20 @@ class GuildInvasionController extends AbstractController
             $guildInvasion->generateGrid($post['numero']);
         }
         return $this->redirectToRoute('guild_invasion_index');
+    }
+    
+    /**
+     * simule un raid
+     *
+     * @Route("/guild/invasion/simulation/{id}", name="guild_invasion_simulation_raid")
+     * @ParamConverter("raid", options={"mapping": {"id": "id"}})
+     *
+     * @param Raid $raid
+     */
+    public function simulation(Raid $raid, GuildInvasionSimulation $guildInvasionSimulation)
+    {
+        $guildInvasionSimulation->simulation($raid);
+        
+        return $this->redirectToRoute('guild_invasion_show', array('id' => $raid->getId()));
     }
 }

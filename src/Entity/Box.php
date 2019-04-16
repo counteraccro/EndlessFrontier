@@ -224,9 +224,15 @@ class Box
      */
     private $boxMembers;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\BoxInfo", mappedBy="box")
+     */
+    private $BoxInfo;
+
     public function __construct()
     {
         $this->boxMembers = new ArrayCollection();
+        $this->BoxInfo = new ArrayCollection();
     }
 
     public function getRaid(): ?Raid
@@ -655,6 +661,37 @@ class Box
             // set the owning side to null (unless already changed)
             if ($boxMember->getBox() === $this) {
                 $boxMember->setBox(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|BoxInfo[]
+     */
+    public function getBoxInfo(): Collection
+    {
+        return $this->BoxInfo;
+    }
+
+    public function addBoxInfo(BoxInfo $boxInfo): self
+    {
+        if (!$this->BoxInfo->contains($boxInfo)) {
+            $this->BoxInfo[] = $boxInfo;
+            $boxInfo->setBox($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBoxInfo(BoxInfo $boxInfo): self
+    {
+        if ($this->BoxInfo->contains($boxInfo)) {
+            $this->BoxInfo->removeElement($boxInfo);
+            // set the owning side to null (unless already changed)
+            if ($boxInfo->getBox() === $this) {
+                $boxInfo->setBox(null);
             }
         }
 

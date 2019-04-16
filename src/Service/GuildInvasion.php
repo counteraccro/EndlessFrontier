@@ -2,7 +2,6 @@
 namespace App\Service;
 
 use Symfony\Component\Finder\Finder;
-use Doctrine\Common\Persistence\ManagerRegistry as Doctrine;
 use App\Entity\Raid;
 use App\Entity\Box;
 
@@ -15,22 +14,6 @@ class GuildInvasion extends AppService
      * @var string
      */
     const XML_PATH = DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'xml';
-
-    /**
-     * Object doctrine
-     *
-     * @var Doctrine
-     */
-    private $doctrine;
-
-    /**
-     *
-     * @param Doctrine $doctrine
-     */
-    public function __construct(Doctrine $doctrine)
-    {
-        $this->doctrine = $doctrine;
-    }
 
     /**
      *

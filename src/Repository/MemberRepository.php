@@ -18,6 +18,20 @@ class MemberRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Member::class);
     }
+    
+    /**
+     * Retourne la liste des membres actif
+     * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
+     */
+    public function getListeMemberActif()
+    {
+        return $this->createQueryBuilder('m')
+        ->andWhere('m.disabled = :val')
+        ->setParameter('val', 0)
+        ->getQuery()
+        ->getResult()
+        ;
+    }
 
     // /**
     //  * @return Member[] Returns an array of Member objects

@@ -20,13 +20,12 @@ class UserFixtures extends AppFixtures
     {
         $user = new User();
         $user->setUsername('admin');
-        $user->setRoles(array('ROLE_ADMIN'));
-        
-        $user->setPassword($this->passwordEncoder->encodePassword(
-         $user,
-            'passpass'
-           ));
-        
+        $user->setRoles(array(
+            'ROLE_ADMIN'
+        ));
+
+        $user->setPassword($this->passwordEncoder->encodePassword($user, 'passpass'));
+
         $manager->persist($user);
         $manager->flush();
     }

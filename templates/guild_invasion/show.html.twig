@@ -7,7 +7,7 @@
 	<h1>Grille pour la guerre des guild n°{{ raid.numero }} [#{{ raid.id }}]</h1>
 	
 	<a href="{{path('guild_invasion_index')}}"><span class="oi oi-arrow-thick-left"></span> Retour</a> 
-	<a href="#" class="float-right"><span class="oi oi-data-transfer-download"></span> Lancer la simulation</a>
+	<a href="{{ path('guild_invasion_simulation_raid', {'id' : raid.id}) }}" class="float-right"><span class="oi oi-data-transfer-download"></span> Lancer la simulation</a>
 	
 	<div class="row no-gutters">
 		{% for box in raid.box  %}
