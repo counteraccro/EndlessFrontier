@@ -32,6 +32,11 @@ class BoxMember
      * @ORM\JoinColumn(nullable=false)
      */
     private $Box;
+    
+    public function __construct()
+    {
+        $this->date = new \DateTime();
+    }
 
 
     public function getId(): ?int

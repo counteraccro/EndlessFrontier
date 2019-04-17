@@ -6,6 +6,9 @@ use App\Entity\Member;
 use Doctrine\Common\Persistence\ManagerRegistry as Doctrine;
 use App\Entity\Log;
 use phpDocumentor\Reflection\Types\Object_;
+use App\Entity\BoxInfo;
+use App\Entity\BoxMember;
+use App\Entity\Box;
 
 /**
  * Service qui va simuler une invasion de guilde
@@ -36,6 +39,13 @@ class GuildInvasionSimulation extends AppService
      * @var integer
      */
     private $nb_open_box = 3;
+    
+    /**
+     * Nombre de level à ajouter après la mort d'un boss
+     * 
+     * @var integer
+     */
+    private $levelAdditionnal = 50;
 
     /**
      * Correspondance entre le niveau d'un boss et une étoile
@@ -49,6 +59,12 @@ class GuildInvasionSimulation extends AppService
         540 => 4,
         600 => 5
     );
+    
+    /**
+     * Objet raid
+     * @var Raid
+     */
+    private $raid;
 
     /**
      * Object doctrine
@@ -74,10 +90,16 @@ class GuildInvasionSimulation extends AppService
      */
     public function simulation(Raid $raid)
     {
+        $this->raid = $raid;
+        
         $memberRepository = $this->getRepository(Member::class);
         $listeMember = $memberRepository->getListeMemberActif();
-
-        $this->_simulation($raid, $listeMember);
+  
+        $grid = array();
+        $grid[$this->raid->getBox()
+            ->first()
+            ->getblockId()] = $this->raid->getBox()->first();
+        $this->_simulation($listeMember, 1, $grid);
     }
 
     /**
@@ -86,43 +108,67 @@ class GuildInvasionSimulation extends AppService
      * @param Raid $raid
      * @param number $day
      */
-    private function _simulation(Raid $raid, $listeMember, $day = 1)
+    private function _simulation($listeMember, int $day = 1, $grid = array())
     {
         $tabLog = array();
 
-        $this->log('----- day ' . $day, $raid);
+        $this->log('----- day ' . $day, $this->raid);
 
         for ($i = 0; $i < $this->nb_ticket; $i ++) {
 
-            /**
-             *
-             * @var Member $member
-             */
+            /** @var Member $member */
             foreach ($listeMember as $member) {
                 $score = $this->memberScoreSimulation->calculationScore($member);
 
-                $tabLog[$member->getId()][] = 'Ticket n°' . ($i+1) . ' ' . $member->getName() . ' => ' . $score . ' ';
+                // $tabLog[$member->getId()][] = 'Ticket n°' . ($i + 1) . ' ' . $member->getName() . ' => ' . $score . ' ';
+
+                if (count($grid) == 1) {
+                    
+                    $box = $grid[1];
+                    /** @var Box $box */
+                    $boxInfo = new BoxInfo();
+                    $boxInfo->setLevel($box->getLevel() + 50);
+                    $boxInfo->setBox($box);
+                    $boxInfo->setStar(0);
+                    $this->persist($boxInfo);
+                    
+                    $boxMember = new BoxMember();
+                    $boxMember->setMember($member);
+                    $boxMember->setBox($box);
+                    $this->persist($boxMember);
+                    
+                    $tabLog[$member->getId()][] = 'Ticket n°' . ($i + 1) . ' ' . $member->getName() . ' : ' . $box->getBlockId() . "(" . $box->getLevel() . ")";
+                }
             }
         }
 
         // Génération des logs
-        foreach($tabLog as $tabTmp)
-        {
+        foreach ($tabLog as $tabTmp) {
             $str = '';
-            foreach($tabTmp as $strTmp)
-            {
+            foreach ($tabTmp as $strTmp) {
                 $str .= $strTmp;
             }
-            $this->log($str, $raid);
+            $this->log($str, $this->raid);
         }
 
         $this->flush();
 
         if ($day < $this->nb_day) {
-            return $this->_simulation($raid, $listeMember, $day + 1);
+            return $this->_simulation($listeMember, $day + 1, $grid);
         }
 
         return true;
+    }
+    
+    /**
+     * Retourne la liste des cases adjacente
+     * @param Box $box
+     */
+    private function defineAdjacentBox(Box $box)
+    {
+        
+        
+        //$this->raid->getBox()->
     }
 
     /**

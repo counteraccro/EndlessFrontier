@@ -225,7 +225,7 @@ class Box
     private $boxMembers;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\BoxInfo", mappedBy="box")
+     * @ORM\OneToMany(targetEntity="App\Entity\BoxInfo", mappedBy="box", orphanRemoval=true)
      */
     private $BoxInfo;
 

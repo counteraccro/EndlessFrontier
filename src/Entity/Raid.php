@@ -25,6 +25,7 @@ class Raid
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Box", mappedBy="raid", orphanRemoval=true)
+     * @ORM\OrderBy({"blockId" = "ASC"})
      */
     private $box;
 
