@@ -43,4 +43,23 @@ class AppService
     {
         return $this->doctrine->getRepository($class);
     }
+    
+    /**
+     * Permet de persisté un objet
+     * @param $object
+     */
+    protected function persist($object)
+    {
+        $em = $this->doctrine->getManager();
+        $em->persist($object);
+    }
+    
+    /**
+     * Permet de flush les objets persistés
+     */
+    protected function flush()
+    {
+        $em = $this->doctrine->getManager();
+        $em->flush();
+    }
 }

@@ -35,6 +35,15 @@
             {% endif %}
 		{% endfor %}
 	</div>
+	<hr />
+	<h2>Log</h2>
+	<div class="logs">
+		
+		{% for log in raid.logs  %}
+			<div>{{ log.date|date("d-m-Y H:i:s") }} : {{ log.log }}</div>
+		{% endfor %}
+	
+	</div>
 </div>
 
 <script>

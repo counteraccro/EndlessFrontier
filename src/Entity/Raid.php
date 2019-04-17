@@ -28,9 +28,15 @@ class Raid
      */
     private $box;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Log", mappedBy="Raid", orphanRemoval=true)
+     */
+    private $logs;
+
     public function __construct()
     {
         $this->box = new ArrayCollection();
+        $this->logs = new ArrayCollection();
     }
 
 
@@ -76,6 +82,37 @@ class Raid
             // set the owning side to null (unless already changed)
             if ($box->getRaid() === $this) {
                 $box->setRaid(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Log[]
+     */
+    public function getLogs(): Collection
+    {
+        return $this->logs;
+    }
+
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setRaid($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getRaid() === $this) {
+                $log->setRaid(null);
             }
         }
 

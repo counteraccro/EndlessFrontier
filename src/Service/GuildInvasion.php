@@ -59,12 +59,10 @@ class GuildInvasion extends AppService
         {
             throw new \Exception("this raid doesnt exist");
         }
-        
-        $em = $this->doctrine->getManager();
 
         $raid = new Raid();
         $raid->setNumero((int) $xml->raidList[$raid_number]->kindNum[0]);
-        $em->persist($raid);
+        $this->persist($raid);
 
         foreach ($xml->raidList[$raid_number]->raid as $element) {
             $box = new Box();
@@ -72,11 +70,11 @@ class GuildInvasion extends AppService
 
                 $methode = 'set' . ucfirst($key);
                 $box->{$methode}((string) $value);
-                $em->persist($box);
+                $this->persist($box);
             }
             $raid->addBox($box);
         }
-        $em->flush();
+        $this->flush();
 
         return $raid->getId();
     }
