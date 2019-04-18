@@ -39,13 +39,20 @@ class GuildInvasionSimulation extends AppService
      * @var integer
      */
     private $nb_open_box = 3;
-    
+
     /**
      * Nombre de level à ajouter après la mort d'un boss
-     * 
+     *
      * @var integer
      */
     private $levelAdditionnal = 50;
+
+    /**
+     * Nombre de case maximal de la grille en longueur
+     *
+     * @var integer
+     */
+    private $nbBoxRow = 13;
 
     /**
      * Correspondance entre le niveau d'un boss et une étoile
@@ -59,12 +66,20 @@ class GuildInvasionSimulation extends AppService
         540 => 4,
         600 => 5
     );
-    
+
     /**
      * Objet raid
+     *
      * @var Raid
      */
     private $raid;
+
+    /**
+     * Liste des membres
+     *
+     * @var array
+     */
+    private $listeMembers;
 
     /**
      * Object doctrine
@@ -91,15 +106,15 @@ class GuildInvasionSimulation extends AppService
     public function simulation(Raid $raid)
     {
         $this->raid = $raid;
-        
+
         $memberRepository = $this->getRepository(Member::class);
-        $listeMember = $memberRepository->getListeMemberActif();
-  
+        $this->listeMembers = $memberRepository->getListeMemberActif();
+
         $grid = array();
         $grid[$this->raid->getBox()
             ->first()
             ->getblockId()] = $this->raid->getBox()->first();
-        $this->_simulation($listeMember, 1, $grid);
+        $this->_simulation(1, $grid);
     }
 
     /**
@@ -108,67 +123,81 @@ class GuildInvasionSimulation extends AppService
      * @param Raid $raid
      * @param number $day
      */
-    private function _simulation($listeMember, int $day = 1, $grid = array())
+    private function _simulation(int $day = 1, $grid = array())
     {
-        $tabLog = array();
-
         $this->log('----- day ' . $day, $this->raid);
 
         for ($i = 0; $i < $this->nb_ticket; $i ++) {
 
-            /** @var Member $member */
-            foreach ($listeMember as $member) {
-                $score = $this->memberScoreSimulation->calculationScore($member);
-
-                // $tabLog[$member->getId()][] = 'Ticket n°' . ($i + 1) . ' ' . $member->getName() . ' => ' . $score . ' ';
-
-                if (count($grid) == 1) {
-                    
-                    $box = $grid[1];
-                    /** @var Box $box */
-                    $boxInfo = new BoxInfo();
-                    $boxInfo->setLevel($box->getLevel() + 50);
-                    $boxInfo->setBox($box);
-                    $boxInfo->setStar(0);
-                    $this->persist($boxInfo);
-                    
-                    $boxMember = new BoxMember();
-                    $boxMember->setMember($member);
-                    $boxMember->setBox($box);
-                    $this->persist($boxMember);
-                    
-                    $tabLog[$member->getId()][] = 'Ticket n°' . ($i + 1) . ' ' . $member->getName() . ' : ' . $box->getBlockId() . "(" . $box->getLevel() . ")";
-                }
-            }
-        }
-
-        // Génération des logs
-        foreach ($tabLog as $tabTmp) {
-            $str = '';
-            foreach ($tabTmp as $strTmp) {
-                $str .= $strTmp;
-            }
-            $this->log($str, $this->raid);
+            $listeTmpMembers = $this->listeMembers;
+            $this->_memberAttack($listeTmpMembers, $grid, $i);
         }
 
         $this->flush();
 
         if ($day < $this->nb_day) {
-            return $this->_simulation($listeMember, $day + 1, $grid);
+            return $this->_simulation($day + 1, $grid);
         }
 
         return true;
     }
-    
+
     /**
-     * Retourne la liste des cases adjacente
-     * @param Box $box
+     * Méthode récursive qui va permettre de parcourir la liste des membres
+     *
+     * @param array $listeTmpMembers
+     * @param array $grid
+     * @param int $currentTicket
      */
-    private function defineAdjacentBox(Box $box)
+    private function _memberAttack(array $listeTmpMembers, array $grid, int $currentTicket)
     {
-        
-        
-        //$this->raid->getBox()->
+        /** @var Member $member */
+        foreach ($listeTmpMembers as $key => $member) {
+            $score = $this->memberScoreSimulation->calculationScore($member);
+
+            // Cas premier jour, premier hit
+            if (count($grid) == 1) {
+
+                $box = $grid[1];
+                /** @var Box $box */
+                $boxInfo = new BoxInfo();
+                $boxInfo->setLevel($box->getLevel() + 50);
+                $boxInfo->setBox($box);
+                $boxInfo->setStar(0);
+                $this->persist($boxInfo);
+
+                $boxMember = new BoxMember();
+                $boxMember->setMember($member);
+                $boxMember->setBox($box);
+                $this->persist($boxMember);
+
+                $log = 'Ticket n°' . ($currentTicket + 1) . ' ' . $member->getName() . ' : ' . $box->getBlockId() . "(" . $box->getLevel() . ")";
+
+                unset($listeTmpMembers[$key]);
+                
+                $grid = $this->defineAdjacentBox($box, $grid);
+                break;
+            }
+        }
+
+        $this->log($log, $this->raid);
+
+        if (count($listeTmpMembers) > 0) {
+            return $this->_memberAttack($listeTmpMembers, $grid, $currentTicket);
+        }
+
+        return true;
+    }
+
+    /**
+     * Retourne la liste des cases adjacentes
+     *
+     * @param Box $box
+     * @param array $grid
+     */
+    private function defineAdjacentBox(Box $box, array $grid)
+    {
+        return $grid;
     }
 
     /**
