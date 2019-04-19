@@ -33,6 +33,11 @@ class BoxInfo
      */
     private $box;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Member")
+     */
+    private $Member;
+
     public function __construct()
     {
        
@@ -75,6 +80,18 @@ class BoxInfo
     public function setBox(?Box $box): self
     {
         $this->box = $box;
+
+        return $this;
+    }
+
+    public function getMember(): ?Member
+    {
+        return $this->Member;
+    }
+
+    public function setMember(?Member $Member): self
+    {
+        $this->Member = $Member;
 
         return $this;
     }

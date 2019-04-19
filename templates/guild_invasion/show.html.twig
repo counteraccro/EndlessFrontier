@@ -12,22 +12,65 @@
 	<div class="row no-gutters">
 		{% for box in raid.box  %}
 			<div class="col">
-				{% set content %}
-                    <div>
-                    	<b>Nom:</b> {{ box.name }} <br />
-                    	<b>Niveau:</b> {{ box.level }} <br />
-                    	<b>Etoile:</b> {{ box.star }}
-                    </div>
-				{% endset %}
-				<div class="box closed" data-container="body" data-toggle="popover" data-placement="top" title="Case {{ box.blockId }}" data-content="{{ content }}" data-html="true">
+				{% set div_box = 'closed' %}	
+				{% if box.boxInfo is not empty %}
+					{% set div_box = 'update' %}
+					{% set content %}
+						{% for boxInfo in box.boxInfo  %}
+							{% if loop.last %}
+                                <div>
+                                	<b>Nom:</b> {{ box.name }} <br />
+                                	<b>Niveau:</b> {{ boxInfo.level }} <br />
+                                	<b>Etoile:</b> {{ boxInfo.star }} <br />
+                                	<b>Tué par </b> {{ boxInfo.Member.name }}
+                                	<div>
+                                		
+                                	</div>
+                                </div>
+                           {% endif %}
+                        {% endfor %}
+    				{% endset %}
+				{% else %}
+    				{% set content %}
+                        <div>
+                        	<b>Nom:</b> {{ box.name }} <br />
+                        	<b>Niveau:</b> {{ box.level }} <br />
+                        	<b>Etoile:</b> {{ box.star }}
+                        	
+                        	<div>
+                        		
+                        	</div>
+                        </div>
+    				{% endset %}
+				{% endif %}
+				<div class="box {{ div_box }}" data-container="body" data-toggle="popover" data-placement="top" title="Case {{ box.blockId }}" data-content="{{ content }}" data-html="true">
 		            <div class="b b_id">No {{ box.blockId }}</div>
-		            <div class="b b_star">
-    		            {% if box.star > 0  %}
-    		                {{ box.star }}
-    		                <span class="oi oi-star"></span>
-    		            {% endif %}
-		            </div>
-		            <div class="b b_level">Lv {{ box.level }}</div>
+		            
+		            {% if box.boxInfo is not empty %}
+    						{% for boxInfo in box.boxInfo  %}
+    							{% if loop.last %}
+                                    
+                                    <div class="b b_star">
+                    		            {% if boxInfo.star > 0  %}
+                    		                {{ boxInfo.star }}
+    		                				<span class="oi oi-star"></span>
+    		           					 {% endif %}
+		            				</div>
+		            				<div class="b b_level">Lv {{ boxInfo.level }}</div>
+                                    
+                               {% endif %}
+                            {% endfor %}
+    				{% else %}
+                            <div class="b b_star">
+                    		    {% if box.star > 0  %}
+                    		        {{ box.star }}
+    		                			<span class="oi oi-star"></span>
+    		           			 {% endif %}
+		            		</div>
+		            		<div class="b b_level">Lv {{ box.level }}</div>
+    				{% endif %}
+		            
+		            
 		        </div>
 			</div>		
 			{% if loop.index is divisible by(13) %}

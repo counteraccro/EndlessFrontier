@@ -23,8 +23,15 @@
 	color: #DCDCDC;
 }
 
+#guild_invasion_grid .row .col .box.update {
+	border : 1px solid #39B7CD;
+	background-color: #D1EEEE;
+	color: #39B7CD;
+}
+
 #guild_invasion_grid .row .col .box.hover {
-	border : 1px solid orange
+	border : 1px solid orange;
+	cursor: pointer;
 }
 
 /*

@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//templates/guild_invasion/index.html.twig=UTF-8
+encoding//templates/guild_invasion/show.html.twig=UTF-8
 encoding//templates/index/index.html.twig=UTF-8
 encoding//templates/member/add.html.twig=UTF-8
 encoding//templates/member/edit.html.twig=UTF-8
