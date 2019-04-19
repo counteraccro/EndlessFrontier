@@ -30,7 +30,7 @@ Installation
 
 Étape 1 : cloner le dépôt GIT
 
-`https://github.com/counteraccro/TLMC.git`
+`https://github.com/counteraccro/EndlessFrontier.git`
 
 Étape 2 : Installer Symfony
 
@@ -56,7 +56,7 @@ Installation
 Dépendances
 ------------
 
-Production  
+###Production  
 sensio/framework-extra-bundle : ^5.1      
 symfony/asset : 4.2.*      
 symfony/console : 4.2.*      
@@ -78,8 +78,7 @@ symfony/validator : 4.2.*
 symfony/web-link : 4.2.*      
 symfony/yaml : 4.2.*
 
-Développement
-
+###Développement   
 doctrine/doctrine-fixtures-bundle : ^3.1      
 symfony/debug-pack : *      
 symfony/maker-bundle : ^1.0      
