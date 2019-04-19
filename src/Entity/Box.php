@@ -229,10 +229,16 @@ class Box
      */
     private $BoxInfo;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\BoxConstraint", mappedBy="box", orphanRemoval=true)
+     */
+    private $boxConstraints;
+
     public function __construct()
     {
         $this->boxMembers = new ArrayCollection();
         $this->BoxInfo = new ArrayCollection();
+        $this->boxConstraints = new ArrayCollection();
     }
 
     public function getRaid(): ?Raid
@@ -692,6 +698,37 @@ class Box
             // set the owning side to null (unless already changed)
             if ($boxInfo->getBox() === $this) {
                 $boxInfo->setBox(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|BoxConstraint[]
+     */
+    public function getBoxConstraints(): Collection
+    {
+        return $this->boxConstraints;
+    }
+
+    public function addBoxConstraint(BoxConstraint $boxConstraint): self
+    {
+        if (!$this->boxConstraints->contains($boxConstraint)) {
+            $this->boxConstraints[] = $boxConstraint;
+            $boxConstraint->setBox($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBoxConstraint(BoxConstraint $boxConstraint): self
+    {
+        if ($this->boxConstraints->contains($boxConstraint)) {
+            $this->boxConstraints->removeElement($boxConstraint);
+            // set the owning side to null (unless already changed)
+            if ($boxConstraint->getBox() === $this) {
+                $boxConstraint->setBox(null);
             }
         }
 

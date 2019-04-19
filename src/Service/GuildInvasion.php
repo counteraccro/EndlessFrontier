@@ -4,6 +4,7 @@ namespace App\Service;
 use Symfony\Component\Finder\Finder;
 use App\Entity\Raid;
 use App\Entity\Box;
+use App\Entity\BoxConstraint;
 
 class GuildInvasion extends AppService
 {
@@ -27,6 +28,7 @@ class GuildInvasion extends AppService
 
     /**
      * Retourne le nombre de raid du fichier xml
+     *
      * @return string[]
      */
     public function getListRaidByXML()
@@ -37,7 +39,7 @@ class GuildInvasion extends AppService
         $return = array();
         for ($i = 0; $i < count($xml->raidList); $i ++) {
             $return[$i] = 'Grille n°' . ($i + 1) . ' [Nb Cases:' . count($xml->raidList[$i]->raid) . ']';
-        }  
+        }
         return $return;
     }
 
@@ -53,10 +55,9 @@ class GuildInvasion extends AppService
         $absoluteFilePath = $this->getAbsolutPathOfXML();
 
         $xml = simplexml_load_file($absoluteFilePath);
-        $raid_number = (integer)$raid_number;
-        
-        if(!isset($xml->raidList[$raid_number]))
-        {
+        $raid_number = (integer) $raid_number;
+
+        if (! isset($xml->raidList[$raid_number])) {
             throw new \Exception("this raid doesnt exist");
         }
 
@@ -70,13 +71,30 @@ class GuildInvasion extends AppService
 
                 $methode = 'set' . ucfirst($key);
                 $box->{$methode}((string) $value);
-                $this->persist($box);
             }
+
+            $box = $this->addConstaint($box);
+            $this->persist($box);
+
             $raid->addBox($box);
         }
         $this->flush();
 
         return $raid->getId();
+    }
+
+    private function addConstaint(Box $box)
+    {
+        if ($box->getBlockId() == 1) {
+            $boxConstraint = new BoxConstraint();
+            $boxConstraint->setNbOpen(1);
+            $boxConstraint->setBox($box);
+
+            $this->persist($boxConstraint);
+
+            $box->addBoxConstraint($boxConstraint);
+        }
+        return $box;
     }
 
     /**
