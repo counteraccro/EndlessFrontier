@@ -57,28 +57,32 @@ Installation
 Dépendances
 ------------
 
-doctrine/data-fixtures: ^1.3
-sensio/framework-extra-bundle: ^5.2
-symfony/asset: ^4.1
-symfony/config: ^4.1
-symfony/console: ^4.1
-symfony/dependency-injection: ^4.1
-symfony/expression-language: ^4.1
-symfony/flex: ^1.0
-symfony/form: ^4.1
-symfony/framework-bundle: ^4.1
-symfony/lts: ^4@dev
-symfony/monolog-bundle: ^3.1
-symfony/orm-pack: *
-symfony/process: ^4.1
-symfony/security-bundle: ^4.1
-symfony/serializer: ^4.1
-symfony/serializer-pack: *
-symfony/swiftmailer-bundle: ^3.2
-symfony/translation: ^4.1
-symfony/twig-bundle: ^4.1
-symfony/validator: ^4.1
-symfony/web-link: ^4.1
-symfony/webpack-encore-pack: *
-symfony/yaml: ^4.1
-twig/extensions: ^1.5
+Production
+"sensio/framework-extra-bundle" : "^5.1",
+"symfony/asset" : "4.2.*",
+"symfony/console" : "4.2.*",
+"symfony/dom-crawler" : "4.2.*",
+"symfony/dotenv" : "4.2.*",
+"symfony/expression-language" : "4.2.*",
+"symfony/flex" : "^1.1",
+"symfony/form" : "4.2.*",
+"symfony/framework-bundle" : "4.2.*",
+"symfony/monolog-bundle" : "^3.1",
+"symfony/orm-pack" : "*",
+"symfony/process" : "4.2.*",
+"symfony/security-bundle" : "4.2.*",
+"symfony/serializer-pack" : "*",
+"symfony/swiftmailer-bundle" : "^3.1",
+"symfony/translation" : "4.2.*",
+"symfony/twig-bundle" : "4.2.*",
+"symfony/validator" : "4.2.*",
+"symfony/web-link" : "4.2.*",
+"symfony/yaml" : "4.2.*"
+
+Développement
+"doctrine/doctrine-fixtures-bundle" : "^3.1",
+"symfony/debug-pack" : "*",
+"symfony/maker-bundle" : "^1.0",
+"symfony/profiler-pack" : "*",
+"symfony/test-pack" : "*",
+"symfony/web-server-bundle" : "4.2.*"
