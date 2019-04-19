@@ -9,10 +9,13 @@ Le projet fonctionne avec les versions suivantes :
 Projet optimisé pour le navigateur Google Chrome
 
 Version de PHP : 7.3.1
+
 Mysql : 5.7.24
+
 Apache : 2.4.3
 
 Javascript/Jquery 3.3.1
+
 Bootstrap 4.3.1
 
 Icônes 'Iconic' 
