@@ -8,6 +8,7 @@ use App\Entity\Log;
 use App\Entity\BoxInfo;
 use App\Entity\BoxMember;
 use App\Entity\Box;
+use App\Entity\BoxConstraint;
 
 /**
  * Service qui va simuler une invasion de guilde
@@ -23,14 +24,14 @@ class GuildInvasionSimulation extends AppService
      *
      * @var integer
      */
-    CONST NB_TICKET = 2;
+    const NB_TICKET = 2;
 
     /**
      * Nombre de jours que dure une invasion
      *
      * @var integer
      */
-    CONST NB_DAY = 4;
+    const NB_DAY = 4;
 
     /**
      * Nombre de fois que l'on peut ouvrir une case
@@ -131,6 +132,7 @@ class GuildInvasionSimulation extends AppService
             ->first()
             ->getblockId()] = $this->raid->getBox()->first();
         $this->_simulation(1);
+        
     }
 
     /**
@@ -166,36 +168,46 @@ class GuildInvasionSimulation extends AppService
      */
     private function _memberAttack(array $listeTmpMembers, int $currentTicket)
     {
-        // Boucle infini
-        while (true) {
+        foreach ($this->grid as $box) {
+            $tabMember = $this->defineBestMember($box, $listeTmpMembers);
+            $member = $tabMember['member'];
 
-            // Cas premier jour, premier hit
-            if (count($this->grid) == 1) {
+            $this->newBoxInfo($box, $member);
+            $this->newBoxMember($box, $member);
 
-                $box = $this->grid[1];
+            $log = 'Ticket n°' . ($currentTicket + 1) . ' ' . $member->getName() . ' : ' . $box->getBlockId() . "(" . $box->getLevel() . ")";
+            $this->log($log, $this->raid);
 
-                $tabMember = $this->defineBestMember($box, $listeTmpMembers);
-                $member = $tabMember['member'];
+            unset($listeTmpMembers[$tabMember['key']]);
 
-                $this->newBoxInfo($box, $member);
-                $this->newBoxMember($box, $member);
+            $this->defineAdjacentBox($box);
+            $this->checkConstraint($box);
 
-                $log = 'Ticket n°' . ($currentTicket + 1) . ' ' . $member->getName() . ' : ' . $box->getBlockId() . "(" . $box->getLevel() . ")";
-                $this->log($log, $this->raid);
-                
-                unset($listeTmpMembers[$tabMember['key']]);
-
-                $this->defineAdjacentBox($box);
-
-                break;
-            }
-            else 
-            {
-                //die('Cas Plusieurs elements dans la grille');
-                unset($listeTmpMembers[array_rand($listeTmpMembers)]);
-                break;
-            }
+            break;
         }
+
+        // Cas premier jour, premier hit
+        /*
+         * if (count($this->grid) == 1) {
+         *
+         * $box = $this->grid[1];
+         *
+         * $tabMember = $this->defineBestMember($box, $listeTmpMembers);
+         * $member = $tabMember['member'];
+         *
+         * $this->newBoxInfo($box, $member);
+         * $this->newBoxMember($box, $member);
+         *
+         * $log = 'Ticket n°' . ($currentTicket + 1) . ' ' . $member->getName() . ' : ' . $box->getBlockId() . "(" . $box->getLevel() . ")";
+         * $this->log($log, $this->raid);
+         *
+         * unset($listeTmpMembers[$tabMember['key']]);
+         *
+         * $this->defineAdjacentBox($box);
+         *
+         * break;
+         * }
+         */
 
         if (count($listeTmpMembers) > 0) {
             return $this->_memberAttack($listeTmpMembers, $currentTicket);
@@ -212,19 +224,57 @@ class GuildInvasionSimulation extends AppService
     private function defineAdjacentBox(Box $box)
     {
         // On défini les cases adjacentes théorique gauche / droite / haut / bas
-        $tmp = array($box->getBlockId() - 1,  $box->getBlockId() + 1, $box->getBlockId() - self::NB_GRID_ROW, $box->getBlockId() + self::NB_GRID_ROW);
-        
+        $tmp = array(
+            //$box->getBlockId() - 1,
+            $box->getBlockId() + 1,
+            //$box->getBlockId() - self::NB_GRID_ROW,
+            $box->getBlockId() + self::NB_GRID_ROW
+        );
+
         /** @var Box $box_b */
-        foreach($this->raid->getBox() as $box_b)
-        {
+        foreach ($this->raid->getBox() as $box_b) {
             // Si le block id correspond alors on le rajoute à la grille
-            if(in_array($box_b->getBlockId(), $tmp))
-            {
+            if (in_array($box_b->getBlockId(), $tmp)) {
                 $this->grid[$box_b->getBlockId()] = $box_b;
+                
+                $this->checkConstraint($box);
+            }
+        }
+
+        $this->grid;
+    }
+    
+    /**
+     * Vérifie si une case contient une contrainte, si oui traite la contrainte
+     * @param Box $box
+     */
+    private function checkConstraint(Box $box)
+    {
+        // On vérifie si la case contient au moins une contrainte
+        if($box->getBoxConstraints()->count() > 0)
+        {
+            /** @var BoxConstraint $boxConstraint; **/
+            $boxConstraint = $box->getBoxConstraints()->last();
+            
+            // On check si le nombre d'ouverture max à été atteint en fonction de la contrainte
+            if($box->getBoxInfo()->count() >= $boxConstraint->getNbOpen())
+            {
+                //si c'est le cas on enlève la case de la grille
+                unset($this->grid[$box->getBlockId()]);
+                return true;
             }
         }
         
-        $this->grid;
+        /**
+         * Cas la case à été ouverte plus de X fois
+         */
+        if($box->getBoxInfo()->count() == self::NB_OPEN_BOX)
+        {
+            echo $box->getBlockId() . " est supprimé de la grille <br />";
+            unset($this->grid[$box->getBlockId()]);
+            return true;
+        }
+        
     }
 
     /**
@@ -266,6 +316,9 @@ class GuildInvasionSimulation extends AppService
         $boxMember->setMember($member);
         $boxMember->setBox($box);
         $this->persist($boxMember);
+        
+        $box->addBoxMember($boxMember);
+        $this->grid[$box->getBlockId()] = $box;
     }
 
     /**
