@@ -169,6 +169,22 @@ class GuildInvasionSimulation extends AppService
     private function _memberAttack(array $listeTmpMembers, int $currentTicket)
     {
         foreach ($this->grid as $box) {
+            
+            $this->defineAdjacentBox($box);
+            $this->checkConstraint($box);
+            
+            if($box->getBoxConstraints()->count() > 0)
+            {
+                $boxConstraint = $box->getBoxConstraints()->last();
+                
+                // On check si le nombre d'ouverture max à été atteint en fonction de la contrainte
+                if($boxConstraint->getNbOpen() == 0 || $box->getBoxInfo()->count() >= $boxConstraint->getNbOpen())
+                {
+                    continue;
+                }
+            }
+            
+            
             $tabMember = $this->defineBestMember($box, $listeTmpMembers);
             $member = $tabMember['member'];
 
@@ -185,29 +201,6 @@ class GuildInvasionSimulation extends AppService
 
             break;
         }
-
-        // Cas premier jour, premier hit
-        /*
-         * if (count($this->grid) == 1) {
-         *
-         * $box = $this->grid[1];
-         *
-         * $tabMember = $this->defineBestMember($box, $listeTmpMembers);
-         * $member = $tabMember['member'];
-         *
-         * $this->newBoxInfo($box, $member);
-         * $this->newBoxMember($box, $member);
-         *
-         * $log = 'Ticket n°' . ($currentTicket + 1) . ' ' . $member->getName() . ' : ' . $box->getBlockId() . "(" . $box->getLevel() . ")";
-         * $this->log($log, $this->raid);
-         *
-         * unset($listeTmpMembers[$tabMember['key']]);
-         *
-         * $this->defineAdjacentBox($box);
-         *
-         * break;
-         * }
-         */
 
         if (count($listeTmpMembers) > 0) {
             return $this->_memberAttack($listeTmpMembers, $currentTicket);
@@ -257,7 +250,7 @@ class GuildInvasionSimulation extends AppService
             $boxConstraint = $box->getBoxConstraints()->last();
             
             // On check si le nombre d'ouverture max à été atteint en fonction de la contrainte
-            if($box->getBoxInfo()->count() >= $boxConstraint->getNbOpen())
+            if($boxConstraint->getNbOpen() == 0 || $box->getBoxInfo()->count() >= $boxConstraint->getNbOpen())
             {
                 //si c'est le cas on enlève la case de la grille
                 unset($this->grid[$box->getBlockId()]);
@@ -265,12 +258,9 @@ class GuildInvasionSimulation extends AppService
             }
         }
         
-        /**
-         * Cas la case à été ouverte plus de X fois
-         */
+        //Cas la case à été ouverte plus de X fois
         if($box->getBoxInfo()->count() == self::NB_OPEN_BOX)
         {
-            echo $box->getBlockId() . " est supprimé de la grille <br />";
             unset($this->grid[$box->getBlockId()]);
             return true;
         }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<main>
+	<raid>
+		<blockId>1</blockId>
+		<nbOpen>1</nbOpen>
+	</raid>
+	<raid>
+		<blockId>14</blockId>
+		<nbOpen>0</nbOpen>
+	</raid>
+</main>

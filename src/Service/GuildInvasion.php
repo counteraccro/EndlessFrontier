@@ -10,11 +10,25 @@ class GuildInvasion extends AppService
 {
 
     /**
-     * path du fichier xml
+     * path du fichier xml des invasions
      *
      * @var string
      */
-    const XML_PATH = DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'xml';
+    const XML_PATH_INVASION = DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . 'invasions';
+
+    /**
+     * path des fichiers xml de contraintes
+     *
+     * @var string
+     */
+    const XML_PATH_CONSTRAINTS = DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . 'constraints';
+
+    /**
+     * Object XML contenant l'ensemble des contraintes du raid courant
+     *
+     * @var object
+     */
+    private $xml_constraints;
 
     /**
      *
@@ -23,6 +37,7 @@ class GuildInvasion extends AppService
      */
     public function generateGrid($raid_number = 0)
     {
+        $this->loadConstraintsXMLFile($raid_number);
         $this->saveRaidByXML($raid_number);
     }
 
@@ -33,7 +48,7 @@ class GuildInvasion extends AppService
      */
     public function getListRaidByXML()
     {
-        $absoluteFilePath = $this->getAbsolutPathOfXML();
+        $absoluteFilePath = $this->getAbsolutPathOfXML(dirname(__DIR__) . self::XML_PATH_INVASION);
         $xml = simplexml_load_file($absoluteFilePath);
 
         $return = array();
@@ -52,7 +67,7 @@ class GuildInvasion extends AppService
      */
     private function saveRaidByXML($raid_number = 0)
     {
-        $absoluteFilePath = $this->getAbsolutPathOfXML();
+        $absoluteFilePath = $this->getAbsolutPathOfXML(dirname(__DIR__) . self::XML_PATH_INVASION);
 
         $xml = simplexml_load_file($absoluteFilePath);
         $raid_number = (integer) $raid_number;
@@ -83,18 +98,42 @@ class GuildInvasion extends AppService
         return $raid->getId();
     }
 
+    /**
+     * Ajoute les contraintes associé à l'invasion pour chaque case
+     *
+     * @param Box $box
+     * @return \App\Entity\Box
+     */
     private function addConstaint(Box $box)
     {
-        if ($box->getBlockId() == 1) {
-            $boxConstraint = new BoxConstraint();
-            $boxConstraint->setNbOpen(1);
-            $boxConstraint->setBox($box);
+        foreach ($this->xml_constraints->raid as $contraint) {
 
-            $this->persist($boxConstraint);
+            if ($contraint->blockId == $box->getBlockId()) {
+                $boxConstraint = new BoxConstraint();
+                $boxConstraint->setNbOpen((int)$contraint->nbOpen);
+                $boxConstraint->setBox($box);
 
-            $box->addBoxConstraint($boxConstraint);
+                $this->persist($boxConstraint);
+
+                $box->addBoxConstraint($boxConstraint);
+            }
         }
         return $box;
+    }
+
+    /**
+     * Charge un fichier de contrainte en fonction du raid
+     *
+     * @param int $raid_number
+     */
+    private function loadConstraintsXMLFile(int $raid_number)
+    {
+        $absolutePath = $this->getAbsolutPathOfXML(dirname(__DIR__) . self::XML_PATH_CONSTRAINTS);
+
+        $absolutePath = substr($absolutePath, 0, - 5);
+        $absolutePath = $absolutePath . ($raid_number + 1) . ".xml";
+
+        $this->xml_constraints = simplexml_load_file($absolutePath);
     }
 
     /**
@@ -103,14 +142,12 @@ class GuildInvasion extends AppService
      * @throws \Exception
      * @return string
      */
-    private function getAbsolutPathOfXML()
+    private function getAbsolutPathOfXML(string $path)
     {
-        $path = dirname(__DIR__) . self::XML_PATH;
-
         $finder = new Finder();
         $finder->files()->in($path);
 
-        if ($finder->count() > 1) {
+        if ($finder->count() > 1 && $path == self::XML_PATH_INVASION) {
             throw new \Exception("Several files have been detected, only one file must be present");
         }
 
